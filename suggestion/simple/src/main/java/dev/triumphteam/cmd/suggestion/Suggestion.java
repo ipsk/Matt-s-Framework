@@ -21,25 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package dev.triumphteam.cmd.core.suggestion;
+package dev.triumphteam.cmd.suggestion;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * Functional interface to allow simple requirement suggestion without the use of any hard coded data.e command sender type.
- */
-@FunctionalInterface
-public interface SuggestionResolver<S> {
+public interface Suggestion<S, T> {
 
-    /**
-     * Resolves the suggestions for the command argument.
-     *
-     * @param sender    The command sender.
-     * @param arguments A list with all the typed arguments.
-     * @return A list of suggestions.
-     */
-    @NotNull List<String> resolve(final @NotNull S sender, final @NotNull List<String> arguments);
-
+    @NotNull List<T> getSuggestions(
+            final @NotNull S sender,
+            final @NotNull T current,
+            final @NotNull List<T> arguments
+    );
 }

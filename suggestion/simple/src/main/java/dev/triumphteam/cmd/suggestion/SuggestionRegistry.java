@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package dev.triumphteam.cmd.core.suggestion;
+package dev.triumphteam.cmd.suggestion;
 
 import dev.triumphteam.cmd.core.extention.registry.Registry;
 import dev.triumphteam.cmd.core.util.Pair;

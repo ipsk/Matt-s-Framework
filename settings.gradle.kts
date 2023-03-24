@@ -9,7 +9,7 @@ rootProject.name = "triumph-cmd"
 
 listOf(
     "core",
-    "simple"
+    "simple",
 ).forEach(::includeProject)
 
 listOf(
@@ -20,6 +20,9 @@ listOf(
      // "discord/jda-prefixed" to "jda-prefixed",
      "discord/jda/slash" to "jda-slash",
      "discord/kord/slash" to "kord-slash",
+
+     "suggestion/typed" to "typed-suggestions",
+     "suggestion/simple" to "simple-suggestions",
 
      "kotlin/coroutines" to "kotlin-coroutines",
      "kotlin/extensions" to "kotlin-extensions",

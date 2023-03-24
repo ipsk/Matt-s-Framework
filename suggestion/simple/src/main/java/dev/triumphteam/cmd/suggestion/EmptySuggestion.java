@@ -21,17 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package dev.triumphteam.cmd.core.suggestion;
+package dev.triumphteam.cmd.suggestion;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface Suggestion<S, T> {
+import static java.util.Collections.emptyList;
 
-    @NotNull List<T> getSuggestions(
+public final class EmptySuggestion<S> implements Suggestion<S, Void> {
+
+    @Override
+    public @NotNull List<Void> getSuggestions(
             final @NotNull S sender,
-            final @NotNull T current,
-            final @NotNull List<T> arguments
-    );
+            final @NotNull Void current,
+            final @NotNull List<Void> arguments
+    ) {
+        return emptyList();
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return "EmptySuggestion{}";
+    }
 }

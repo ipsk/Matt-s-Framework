@@ -21,28 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package dev.triumphteam.cmd.core.suggestion;
+package dev.triumphteam.cmd.suggestion;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static java.util.Collections.emptyList;
+/**
+ * Functional interface to allow simple requirement suggestion without the use of any hard coded data.e command sender type.
+ */
+@FunctionalInterface
+public interface SuggestionResolver<S, T> {
 
-public final class EmptySuggestion<S> implements Suggestion<S> {
+    /**
+     * Resolves the suggestions for the command argument.
+     *
+     * @param sender    The command sender.
+     * @param arguments A list with all the typed arguments.
+     * @return A list of suggestions.
+     */
+    @NotNull List<T> resolve(final @NotNull S sender, final @NotNull List<T> arguments);
 
-    @Override
-    public @NotNull List<String> getSuggestions(
-            final @NotNull S sender,
-            final @NotNull String current,
-            final @NotNull List<String> arguments
-    ) {
-        return emptyList();
-    }
-
-
-    @Override
-    public @NotNull String toString() {
-        return "EmptySuggestion{}";
-    }
 }

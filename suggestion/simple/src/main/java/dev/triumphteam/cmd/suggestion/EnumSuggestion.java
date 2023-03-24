@@ -1,18 +1,18 @@
 /**
  * MIT License
- * <p>
+ *
  * Copyright (c) 2019-2021 Matt
- * <p>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * <p>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,27 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package dev.triumphteam.cmd.core.suggestion;
+package dev.triumphteam.cmd.suggestion;
 
+import dev.triumphteam.cmd.core.util.EnumUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public final class SimpleSuggestion<S> implements Suggestion<S> {
+public final class EnumSuggestion<S> implements Suggestion<S, String> {
 
-    private final SuggestionResolver<S> resolver;
-    private final SuggestionMethod method;
+    private final Class<? extends Enum<?>> enumType;
+    private final boolean suggestLowercase;
 
-    public SimpleSuggestion(
-            final @NotNull SuggestionResolver<S> resolver,
-            final @NotNull SuggestionMethod method
+    public EnumSuggestion(
+            final @NotNull Class<? extends Enum<?>> enumType,
+            final boolean suggestLowercase
     ) {
-        this.resolver = resolver;
-        this.method = method;
+        this.enumType = enumType;
+        this.suggestLowercase = suggestLowercase;
+
+        EnumUtils.populateCache(enumType);
     }
 
     @Override
@@ -50,42 +52,37 @@ public final class SimpleSuggestion<S> implements Suggestion<S> {
             final @NotNull String current,
             final @NotNull List<String> arguments
     ) {
-        Stream<String> stream = resolver.resolve(sender, arguments).stream();
-
-        switch (method) {
-            case STARTS_WITH: {
-                stream = stream.filter(it -> it.toLowerCase().startsWith(current.toLowerCase()));
-                break;
-            }
-
-            case CONTAINS: {
-                stream = stream.filter(it -> it.toLowerCase().contains(current.toLowerCase()));
-                break;
-            }
-
-            default: break;
-        }
-
-        return stream.collect(Collectors.toList());
+        return EnumUtils.getEnumConstants(enumType)
+                .values()
+                .stream()
+                .map(it -> {
+                    final Enum<?> constant = it.get();
+                    if (constant == null) return null;
+                    final String name = constant.name();
+                    return suggestLowercase ? name.toLowerCase() : name;
+                })
+                .filter(Objects::nonNull)
+                .filter(it -> it.toLowerCase().startsWith(current.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
     @Override
     public boolean equals(final @Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final SimpleSuggestion<?> that = (SimpleSuggestion<?>) o;
-        return resolver.equals(that.resolver);
+        final EnumSuggestion<?> that = (EnumSuggestion<?>) o;
+        return enumType.equals(that.enumType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(resolver);
+        return Objects.hash(enumType);
     }
 
     @Override
     public @NotNull String toString() {
-        return "SimpleSuggestion{" +
-                "resolver=" + resolver +
+        return "EnumSuggestion{" +
+                "enumType=" + enumType +
                 '}';
     }
 }

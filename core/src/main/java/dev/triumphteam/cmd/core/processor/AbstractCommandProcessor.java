@@ -189,7 +189,7 @@ abstract class AbstractCommandProcessor<D, S> implements CommandProcessor<D, S> 
             final @NotNull CommandMeta meta,
             final @NotNull Parameter parameter,
             final @NotNull List<String> argDescriptions,
-            final @NotNull Map<Integer, Suggestion<S>> suggestions,
+            final @NotNull Map<Integer, Suggestion<S, ?>> suggestions,
             final @NotNull ArgumentGroup<Flag> flagGroup,
             final @NotNull ArgumentGroup<Argument> argumentGroup,
             final int position
@@ -295,7 +295,7 @@ abstract class AbstractCommandProcessor<D, S> implements CommandProcessor<D, S> 
             final @NotNull Class<?> type,
             final @NotNull String name,
             final @NotNull String description,
-            final @NotNull Suggestion<S> suggestion,
+            final @NotNull Suggestion<S, ?> suggestion,
             final boolean optional
     ) {
         // All other types default to the resolver.
@@ -342,7 +342,7 @@ abstract class AbstractCommandProcessor<D, S> implements CommandProcessor<D, S> 
             final Class<?> argType = flag.getArgument();
             if (argType == null) continue;
 
-            final Suggestion<S> suggestion = createSuggestion(flag.getSuggestion(), argType);
+            final Suggestion<S, ?> suggestion = createSuggestion(flag.getSuggestion(), argType);
 
             internalArguments.put(
                     flag,
@@ -369,7 +369,7 @@ abstract class AbstractCommandProcessor<D, S> implements CommandProcessor<D, S> 
         for (final Argument argument : group.getAll()) {
             final Class<?> argType = argument.getType();
 
-            final Suggestion<S> suggestion = createSuggestion(argument.getSuggestion(), argType);
+            final Suggestion<S, ?> suggestion = createSuggestion(argument.getSuggestion(), argType);
 
             if (argument instanceof ListArgument) {
                 final ListArgument listArgument = (ListArgument) argument;
@@ -478,7 +478,7 @@ abstract class AbstractCommandProcessor<D, S> implements CommandProcessor<D, S> 
         return type;
     }
 
-    protected @NotNull Suggestion<S> createSuggestion(final @Nullable SuggestionKey suggestionKey, final @NotNull Class<?> type) {
+    protected @NotNull Suggestion<S, ?> createSuggestion(final @Nullable SuggestionKey suggestionKey, final @NotNull Class<?> type) {
         if (suggestionKey == null || suggestionKey.getKey().isEmpty()) {
             if (Enum.class.isAssignableFrom(type)) {
                 return new EnumSuggestion<>((Class<? extends Enum<?>>) type, commandOptions.suggestLowercaseEnum());

@@ -1,4 +1,4 @@
-package dev.triumphteam.cmd.core.suggestion;
+package dev.triumphteam.cmd.suggestion;
 
 public enum SuggestionMethod {
 
